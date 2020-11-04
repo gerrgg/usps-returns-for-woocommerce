@@ -1,0 +1,28 @@
+{
+  "name": "usps-returns-for-woocommerce",
+  "version": "1.0.0",
+  "description": "Allows customers to easily issue RMA's and generate USPS labels",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "@prettier/plugin-php": "0.14.3",
+    "prettier": "^2.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gerrgg/usps-returns-for-woocommerce.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gerrgg/usps-returns-for-woocommerce/issues"
+  },
+  "homepage": "https://github.com/gerrgg/usps-returns-for-woocommerce#readme"
+}
