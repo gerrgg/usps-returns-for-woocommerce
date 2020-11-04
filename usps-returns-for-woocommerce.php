@@ -1,3 +1,5 @@
+<?php
+
 /**
  * Plugin Name:       USPS Returns for Woocommerce
  * Plugin URI:        https://github.com/gerrgg/usps-returns-for-woocommerce
@@ -13,10 +15,68 @@
  * Domain Path:       /languages
  */
 
- <?php class USPSRW
- {
-   function __construct()
-   {
-     add_action('init', [$this, 'create_returns_page'], 2);
-   }
- }
+class USPSRW
+{
+  function __construct()
+  {
+    // Create the returns page and add shortcode
+    add_action('init', [$this, 'create_returns_page'], 1);
+
+    // modify wc_get_template to search in plugin directory
+    add_filter('wc_get_template', [$this, 'uspsrw_get_template'], 10, 2);
+
+    // setup shortcode to return themplate file
+    add_shortcode('USPSreturns', [$this, 'USPS_returns_shortcode']);
+  }
+
+  function create_returns_page()
+  {
+    /**
+     * Create the returns page responsible for the application logic
+     */
+    if (!$this->the_slug_exists('usps-returns')) {
+      wp_insert_post([
+        'post_title' => 'Online Return Center',
+        'post_content' => "[USPSreturns]",
+        'post_status' => 'publish',
+        'post_author' => 1,
+        'post_type' => 'page',
+      ]);
+    }
+  }
+
+  public function the_slug_exists($post_name)
+  {
+    /**
+     * check if the page already exists
+     */
+    global $wpdb;
+    return $wpdb->get_row(
+      "SELECT post_name FROM $wpdb->posts WHERE post_name = '" .
+        $post_name .
+        "'",
+      'ARRAY_A'
+    );
+  }
+
+  public function uspsrw_get_template($located, $template_name)
+  {
+    if ('template/usps-returns.php' === $template_name) {
+      return plugin_dir_path(__FILE__) . $template_name;
+    }
+
+    return $located;
+  }
+
+  public function USPS_returns_shortcode()
+  {
+    /**
+     * shortcode gets usps-returns
+     */
+    ob_start();
+    wc_get_template('template/usps-returns.php');
+    return ob_get_clean();
+  }
+}
+
+new USPSRW();
