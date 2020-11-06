@@ -22,19 +22,16 @@ class USPSRW
     // Create the returns page and add shortcode
     add_action('init', [$this, 'create_returns_page'], 1);
 
-    // modify wc_get_template to search in plugin directory
-    add_filter('wc_get_template', [$this, 'uspsrw_get_template'], 10, 2);
-
     // setup shortcode to return themplate file
     add_shortcode('USPSreturns', [$this, 'USPS_returns_shortcode']);
   }
 
-  function create_returns_page()
+  public function create_returns_page()
   {
     /**
      * Create the returns page responsible for the application logic
      */
-    if (!$this->the_slug_exists('usps-returns')) {
+    if (!$this->the_slug_exists('online-return-center')) {
       wp_insert_post([
         'post_title' => 'Online Return Center',
         'post_content' => "[USPSreturns]",
@@ -51,6 +48,7 @@ class USPSRW
      * check if the page already exists
      */
     global $wpdb;
+
     return $wpdb->get_row(
       "SELECT post_name FROM $wpdb->posts WHERE post_name = '" .
         $post_name .
@@ -59,23 +57,21 @@ class USPSRW
     );
   }
 
-  public function uspsrw_get_template($located, $template_name)
-  {
-    if ('template/usps-returns.php' === $template_name) {
-      return plugin_dir_path(__FILE__) . $template_name;
-    }
-
-    return $located;
-  }
-
   public function USPS_returns_shortcode()
   {
     /**
      * shortcode gets usps-returns
      */
-    ob_start();
-    wc_get_template('template/usps-returns.php');
-    return ob_get_clean();
+
+    echo '<div id="usps-returns"></div>';
+
+    wp_enqueue_script(
+      'react-js',
+      plugin_dir_url(__FILE__) . 'frontend/build/index.js',
+      ['wp-element'],
+      time(),
+      true
+    );
   }
 }
 
